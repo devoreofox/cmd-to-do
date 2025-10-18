@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 Console.WriteLine("Welcome To Your To Do List");
 Console.WriteLine("--------------------------");
@@ -185,9 +186,9 @@ void ListTasks()
     }
 
     string filePath = Path.Combine(listsPath, $"{activeList}.txt");
-    string[] tasks = File.ReadAllLines(filePath);
+    List<string> tasks = File.ReadAllLines(filePath).ToList();
 
-    if (tasks.Length == 0)
+    if (tasks.Count == 0)
     {
         Console.WriteLine("No tasks in the list.");
         return;
@@ -195,7 +196,7 @@ void ListTasks()
 
     Console.WriteLine($"Tasks in '{activeList}':");
 
-    for (int i = 0; i < tasks.Length; i++) Console.WriteLine($"{i + 1}: {tasks[i]}");
+    for (int i = 0; i < tasks.Count; i++) Console.WriteLine($"{i + 1}: {tasks[i]}");
 }
 
 void CompleteTask(int taskNumber)
@@ -207,9 +208,9 @@ void CompleteTask(int taskNumber)
     }
 
     string filePath = Path.Combine(listsPath, $"{activeList}.txt");
-    string[] tasks = File.ReadAllLines(filePath);
+    List<string> tasks = File.ReadAllLines(filePath).ToList();
 
-    if (taskNumber < 1 || taskNumber > tasks.Length)
+    if (taskNumber < 1 || taskNumber > tasks.Count)
     {
         Console.WriteLine("Invalid task number.");
         return;
@@ -230,9 +231,9 @@ void UncompleteTask(int taskNumber)
     }
 
     string filePath = Path.Combine(listsPath, $"{activeList}.txt");
-    string[] tasks = File.ReadAllLines(filePath);
+    List<string> tasks = File.ReadAllLines(filePath).ToList();
 
-    if (taskNumber < 1 || taskNumber > tasks.Length)
+    if (taskNumber < 1 || taskNumber > tasks.Count)
     {
         Console.WriteLine("Invalid task number.");
         return;
@@ -252,14 +253,14 @@ void RemoveTask(int taskNumber)
     }
 
     string filePath = Path.Combine(listsPath, $"{activeList}.txt");
-    string[] tasks = File.ReadAllLines(filePath);
+    List<string> tasks = File.ReadAllLines(filePath).ToList();
 
-    if (tasks.Length == 0) {
+    if (tasks.Count == 0) {
         Console.WriteLine("No tasks to remove.");
         return;
     }
 
-    if (taskNumber < 1 || taskNumber > tasks.Length)
+    if (taskNumber < 1 || taskNumber > tasks.Count)
     {
         Console.WriteLine("Invalid task number.");
         return;
