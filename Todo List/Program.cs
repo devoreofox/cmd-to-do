@@ -5,8 +5,8 @@ Console.WriteLine("Welcome To Your To Do List");
 Console.WriteLine("--------------------------");
 Console.WriteLine("Type 'help' to see available commands.");
 
-bool running = true;
-string listsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"{Path.DirectorySeparatorChar}Todo Lists";
+var running = true;
+string listsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Todo Lists");
 Directory.CreateDirectory(listsPath);
 
 string? activeList = null;
@@ -42,31 +42,31 @@ void HandleCommand()
             running = false;
             break;
         case "create":
-            createList(argument);
+            CreateList(argument);
             break;
         case "delete":
-            deleteList(argument);
+            DeleteList(argument);
             break;
         case "lists":
-            lists();
+            Lists();
             break;
         case "open":
-            openList(argument);
+            OpenList(argument);
             break;
         case "add":
-            addTask(argument);
+            AddTask(argument);
             break;
         case "tasks":
-            listTasks();
+            ListTasks();
             break;
         case "remove":
-            removeTask(int.Parse(argument));
+            RemoveTask(int.Parse(argument));
             break;
         case "complete":
-            completeTask(int.Parse(argument));
+            CompleteTask(int.Parse(argument));
             break;
         case "uncomplete":
-            uncompleteTask(int.Parse(argument));
+            UncompleteTask(int.Parse(argument));
             break;
         default:
             Console.WriteLine("Unknown command. Type 'help' for a list of commands.");
@@ -91,7 +91,7 @@ static void ShowHelp()
     Console.WriteLine("exit - Exits the application.");
 }
 
-void createList(string name)
+void CreateList(string name)
 {
     string filePath = Path.Combine(listsPath, $"{name}.txt"); 
 
@@ -105,7 +105,7 @@ void createList(string name)
     Console.WriteLine($"List '{name}' created and opened.");
 }
 
-void deleteList(string name)
+void DeleteList(string name)
 {
     string filePath = Path.Combine(listsPath, $"{name}.txt");
 
@@ -124,15 +124,12 @@ void deleteList(string name)
 
     File.Delete(filePath);
 
-    if (activeList == name)
-    {
-        activeList = null;
-    }
+    if (activeList == name) activeList = null;
 
     Console.WriteLine($"List '{name}' deleted.");
 }
 
-void lists()
+void Lists()
 {
     var files = Directory.GetFiles(listsPath, "*.txt");
 
@@ -143,13 +140,10 @@ void lists()
     }
 
     Console.WriteLine("Available To-Do Lists:");
-    foreach (var file in files)
-    {
-        Console.WriteLine($"- {Path.GetFileNameWithoutExtension(file)}");
-    }
+    foreach (var file in files) Console.WriteLine($"- {Path.GetFileNameWithoutExtension(file)}");
 }
 
-void openList(string name)
+void OpenList(string name)
 {
     string filePath = Path.Combine(listsPath, $"{name}.txt");
 
@@ -162,7 +156,7 @@ void openList(string name)
     Console.WriteLine($"List '{name}' opened.");
 }
 
-void addTask(string task)
+void AddTask(string task)
 {
     if (activeList == null)
     {
@@ -182,7 +176,7 @@ void addTask(string task)
     Console.WriteLine($"Task added to '{activeList}': {task}");
 }
 
-void listTasks()
+void ListTasks()
 {
     if (activeList == null)
     {
@@ -201,13 +195,10 @@ void listTasks()
 
     Console.WriteLine($"Tasks in '{activeList}':");
 
-    for (int i = 0; i < tasks.Length; i++)
-    {
-        Console.WriteLine($"{i + 1}: {tasks[i]}");
-    }
+    for (int i = 0; i < tasks.Length; i++) Console.WriteLine($"{i + 1}: {tasks[i]}");
 }
 
-void completeTask(int taskNumber)
+void CompleteTask(int taskNumber)
 {
     if (activeList == null)
     {
@@ -230,7 +221,7 @@ void completeTask(int taskNumber)
     Console.WriteLine($"Task {taskNumber} marked as completed in '{activeList}'.");
 }
 
-void uncompleteTask(int taskNumber)
+void UncompleteTask(int taskNumber)
 {
     if (activeList == null)
     {
@@ -252,7 +243,7 @@ void uncompleteTask(int taskNumber)
     File.WriteAllLines(filePath, tasks);
     Console.WriteLine($"Task {taskNumber} marked as incomplete in '{activeList}'.");
 }
-void removeTask(int taskNumber)
+void RemoveTask(int taskNumber)
 {
     if (activeList == null)
     {
