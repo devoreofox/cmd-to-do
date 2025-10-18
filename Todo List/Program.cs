@@ -6,7 +6,7 @@ Console.WriteLine("--------------------------");
 Console.WriteLine("Type 'help' to see available commands.");
 
 var running = true;
-string listsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Todo Lists");
+var listsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Todo Lists");
 Directory.CreateDirectory(listsPath);
 
 string? activeList = null;
