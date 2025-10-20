@@ -57,7 +57,8 @@ void HandleCommand()
             AddTask(argument);
             break;
         case "tasks":
-            ListTasks();
+            if (string.IsNullOrWhiteSpace(argument)) ListTasks();
+            else ListTasks(argument);
             break;
         case "remove":
             RemoveTask(int.Parse(argument));
@@ -67,6 +68,9 @@ void HandleCommand()
             break;
         case "uncomplete":
             UncompleteTask(int.Parse(argument));
+            break;
+        case "removecomplete":
+            DeleteCompletedTasks();
             break;
         default:
             Console.WriteLine("Unknown command. Type 'help' for a list of commands.");
@@ -83,9 +87,10 @@ static void ShowHelp()
     Console.WriteLine("create [name] - Creates a new to-do list.");
     Console.WriteLine("delete [name] - Deletes an existing to-do list.");
     Console.WriteLine("open [name] - Opens an existing to-do list.");
-    Console.WriteLine("tasks - Displays all tasks.");
+    Console.WriteLine("tasks [complete|incomplete] - Lists tasks in the active to-do list with optional filtering.");
     Console.WriteLine("add [task] - Adds a new task to the list.");
     Console.WriteLine("remove [task number] - Removes a task by its number.");
+    Console.WriteLine("removeComplete - Removes all completed tasks from the active list.");
     Console.WriteLine("complete [task number] - Marks a task as completed.");
     Console.WriteLine("uncomplete [task number] - Marks a task as incomplete.");
     Console.WriteLine("exit - Exits the application.");
@@ -176,8 +181,12 @@ void AddTask(string task)
     Console.WriteLine($"Task added to '{activeList}': {task}");
 }
 
-void ListTasks()
+void ListTasks(string filter = "all")
 {
+    filter = filter.ToLower();
+
+    if (filter != "all" && filter != "complete" && filter != "incomplete") filter = "all";
+
     if (activeList == null)
     {
         Console.WriteLine("No active list. Please create or open a list first.");
@@ -192,10 +201,21 @@ void ListTasks()
         Console.WriteLine("No tasks in the list.");
         return;
     }
+    
+    IEnumerable<string> filteredTasks =
+        from task in tasks
+        where filter == "all" ||
+              (filter == "complete" && task.StartsWith("[X]")) ||
+              (filter == "incomplete" && task.StartsWith("[ ]"))
+        select task;
 
     Console.WriteLine($"Tasks in '{activeList}':");
 
-    for (int i = 0; i < tasks.Count; i++) Console.WriteLine($"{i + 1}: {tasks[i]}");
+    var numbered =
+        from pair in filteredTasks.Select((task, index) => new { task, index })
+        select $"{pair.index + 1}: {pair.task}";
+    
+    foreach (var line in numbered) Console.WriteLine(line);
 }
 
 void CompleteTask(int taskNumber)
@@ -269,4 +289,29 @@ void RemoveTask(int taskNumber)
     updatedTasks.RemoveAt(taskNumber - 1);
     File.WriteAllLines(filePath, updatedTasks);
     Console.WriteLine($"Task {taskNumber} removed from '{activeList}'.");
+}
+
+void DeleteCompletedTasks()
+{
+    if (activeList == null)
+    {
+        Console.WriteLine("No active list. Please create or open a list first.");
+        return;
+    }
+
+    string filePath = Path.Combine(listsPath, $"{activeList}.txt");
+    List<string> tasks = File.ReadAllLines(filePath).ToList();
+
+    var uncompletedTasks = 
+        from task in tasks
+        where !task.StartsWith("[X]")
+        select task;
+    var updatedTasks = uncompletedTasks.ToList();
+
+    int removedCount = tasks.Count - updatedTasks.Count;
+
+    File.WriteAllLines(filePath, updatedTasks);
+    
+    if (removedCount == 0) Console.WriteLine("No completed tasks to delete.");
+    else Console.WriteLine($"{removedCount} completed task(s) deleted from '{activeList}'.");
 }
