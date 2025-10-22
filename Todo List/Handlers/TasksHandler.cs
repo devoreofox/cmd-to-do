@@ -1,58 +1,47 @@
 ﻿public class TasksHandler : ICommandHandler
 {
-    private readonly string _listsPath;
-    public TasksHandler(string listsPath)
+    private readonly ListManager _listManager;
+    public TasksHandler(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
-    public string? Handle(string[] args, string? activeList)
+    public void Handle(string[] args)
     {
-        if (activeList == null)
+        try
         {
-            Console.WriteLine("No active list. Please open a list first.");
-            return activeList;
-        }
+            string filePath = _listManager.GetFilePath();
+            var activeList = _listManager.GetActiveList();
+            List<string> tasks = File.ReadAllLines(filePath).ToList();
+            string filter = args.Length > 0 ? args[0].ToLower() : "all";
 
-        string filePath = Path.Combine(_listsPath, $"{activeList}.txt");
+            if (tasks.Count == 0)
+            {
+                Console.WriteLine("No tasks in the list.");
+                return;
+            }
 
-        if (!File.Exists(filePath))
-        {
-            Console.WriteLine($"List '{activeList}' does not exist.");
-            return activeList;
-        }
+            Console.WriteLine($"Tasks in '{activeList}':");
 
-        List<string> tasks = File.ReadAllLines(filePath).ToList();
-
-        if (tasks.Count == 0)
-        {
-            Console.WriteLine("No tasks in the list.");
-            return activeList;
-        }
-
-        Console.WriteLine($"Tasks in '{activeList}':");
-
-        string filter = args.Length > 0 ? args[0].ToLower() : "all";
-
-        IEnumerable<string> filteredTasks =
+            IEnumerable<string> filteredTasks =
             from task in tasks
             where filter == "all" ||
                   (filter == "complete" && task.StartsWith("[X]")) ||
                   (filter == "incomplete" && task.StartsWith("[ ]"))
             select task;
 
-        var display = filteredTasks.ToList();
-        if (display.Count == 0)
-        {
-            Console.WriteLine("No tasks match the filter.");
-            return activeList;
-        }
+            var display = filteredTasks.ToList();
+            if (display.Count == 0)
+            {
+                Console.WriteLine("No tasks match the filter.");
+                return;
+            }
 
-        Console.WriteLine("Tasks:");
-        for (int i = 0; i < display.Count; i++)
-        {
-            Console.WriteLine($"{i + 1}: {display[i]}");
+            Console.WriteLine("Tasks:");
+            for (int i = 0; i < display.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}: {display[i]}");
+            }
         }
-
-        return activeList;
+        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
     }
 }

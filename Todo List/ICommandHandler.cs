@@ -1,4 +1,4 @@
 ﻿public interface ICommandHandler
 {
-    string? Handle(string[] args, string? activeList);
+    void Handle(string[] args);
 }

@@ -1,35 +1,35 @@
 ﻿public class ListsHandler : ICommandHandler
 {
-    private readonly string _listsPath;
-    public ListsHandler(string listsPath)
+    private readonly ListManager _listManager;
+    public ListsHandler(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
-    public string? Handle(string[] args, string? activeList)
+    public void Handle(string[] args)
     {
-        string[] files = Directory.GetFiles(_listsPath, "*.txt");
+        List<string> lists = _listManager.GetLists();
 
-        if (files.Length == 0)
+        if (lists.Count == 0)
         {
             Console.WriteLine("No lists available.");
-            return activeList;
         }
 
         Console.WriteLine("Available lists:");
-
-        foreach (string file in files)
+        try
         {
-            string listName = Path.GetFileNameWithoutExtension(file);
-            if (listName == activeList)
+            var activeList = _listManager.GetActiveList();
+            foreach (string list in lists)
             {
-                Console.WriteLine($"* {listName} (active)");
-            }
-            else
-            {
-                Console.WriteLine($"  {listName}");
+                if (list == activeList)
+                {
+                    Console.WriteLine($"* {list} (active)");
+                }
+                else
+                {
+                    Console.WriteLine($"  {list}");
+                }
             }
         }
-
-        return activeList;
+        catch (ListNotFoundException ex) { foreach (string list in lists)  Console.WriteLine($"  {list}"); }
     }
 }

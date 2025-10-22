@@ -1,7 +1,7 @@
 ﻿public class HelpHandler : ICommandHandler
 {
-    public HelpHandler(string listsPath) { }
-    public string? Handle(string[] args, string? activeList)
+    public HelpHandler() { }
+    public void Handle(string[] args)
     {
         Console.WriteLine("Available Commands:");
         Console.WriteLine("-------------------");
@@ -16,6 +16,5 @@
         Console.WriteLine("complete [task number] - Marks a task as completed.");
         Console.WriteLine("uncomplete [task number] - Marks a task as incomplete.");
         Console.WriteLine("exit - Exits the application.");
-        return activeList;
     }
 }

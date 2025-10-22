@@ -1,27 +1,25 @@
 ﻿public class OpenListHandler : ICommandHandler
 {
-    private readonly string _listsPath;
-    public OpenListHandler(string listsPath)
+    private readonly ListManager _listManager;
+    public OpenListHandler(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
-    public string? Handle(string[] args, string? activeList)
+
+    public void Handle(string[] args)
     {
         if (args.Length == 0)
         {
             Console.WriteLine("Please provide the name of the list to open.");
-            return activeList;
+            return; 
         }
-        var listName = args[0];
-        string filePath = Path.Combine(_listsPath, $"{listName}.txt");
 
-        if (!File.Exists(filePath))
+        try 
         {
-            Console.WriteLine($"List '{listName}' does not exist.");
-            return activeList;
+            var listName = args[0];
+            _listManager.SetActiveList(listName);
+            Console.WriteLine($"List '{listName}' is now active.");
         }
-
-        Console.WriteLine($"List '{listName}' is now active.");
-        return listName;
+        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
     }
 }

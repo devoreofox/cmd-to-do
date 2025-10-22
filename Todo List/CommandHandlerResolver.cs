@@ -1,25 +1,25 @@
 ﻿public class CommandHandlerResolver
 {
-    private readonly string _listsPath;
+    private readonly ListManager _listManager;
 
-    public CommandHandlerResolver(string listsPath)
+    public CommandHandlerResolver(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
     public ICommandHandler Resolve(string commandName)
     {
         return commandName.ToLower() switch
         {
-            "add" => new AddHandler(_listsPath),
-            "remove" => new RemoveHandler(_listsPath),
-            "complete" => new CompleteHandler(_listsPath),
-            "uncomplete" => new UncompleteHandler(_listsPath),
-            "tasks" => new TasksHandler(_listsPath),
-            "lists" => new ListsHandler(_listsPath),
-            "create" => new CreateListHandler(_listsPath),
-            "delete" => new DeleteListHandler(_listsPath),
-            "open" => new OpenListHandler(_listsPath),
-            "help" => new HelpHandler(_listsPath),
+            "add" => new AddHandler(_listManager),
+            "remove" => new RemoveHandler(_listManager),
+            "complete" => new CompleteHandler(_listManager),
+            "uncomplete" => new UncompleteHandler(_listManager),
+            "tasks" => new TasksHandler(_listManager),
+            "lists" => new ListsHandler(_listManager),
+            "create" => new CreateListHandler(_listManager),
+            "delete" => new DeleteListHandler(_listManager),
+            "open" => new OpenListHandler(_listManager),
+            "help" => new HelpHandler(),
             _ => new UnknownHandler()
         };
     }

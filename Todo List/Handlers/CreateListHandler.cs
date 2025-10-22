@@ -1,30 +1,24 @@
 ﻿public class CreateListHandler : ICommandHandler
 {
-    private readonly string _listsPath;
-    public CreateListHandler(string listsPath)
+    private readonly ListManager _listManager;
+    public CreateListHandler(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
-    public string? Handle(string[] args, string? activeList)
+    public void Handle(string[] args)
     {
         if (args.Length == 0)
         {
             Console.WriteLine("Please provide a name for the new list.");
-            return activeList;
+            return;
         }
 
-        var listName = args[0];
-        string filePath = Path.Combine(_listsPath, $"{listName}.txt");
-
-        if (File.Exists(filePath))
+        try
         {
-            Console.WriteLine($"List '{listName}' already exists.");
-            return activeList;
+            var listName = args[0];
+            _listManager.CreateList(listName);
+            Console.WriteLine($"List '{listName}' has been created.");
         }
-
-        File.Create(filePath).Dispose();
-        Console.WriteLine($"List '{listName}' has been created.");
-
-        return activeList;
+        catch (ListAlreadyExistsException ex) { Console.WriteLine(ex.Message); }
     }
 }

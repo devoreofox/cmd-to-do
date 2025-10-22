@@ -1,35 +1,24 @@
 ﻿public class DeleteListHandler : ICommandHandler
 {
-    private readonly string _listsPath;
-    public DeleteListHandler(string listsPath)
+    private readonly ListManager _listManager;
+    public DeleteListHandler(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
-    public string? Handle(string[] args, string? activeList)
+    public void Handle(string[] args)
     {
         if (args.Length == 0)
         {
             Console.WriteLine("Please provide the name of the list to delete.");
-            return activeList;
+            return;
         }
 
-        string listName = args[0];
-        string filePath = Path.Combine(_listsPath, $"{listName}.txt");
-
-        if (!File.Exists(filePath))
+        try
         {
-            Console.WriteLine($"List '{listName}' does not exist.");
-            return activeList;
+            string listName = args[0];
+            _listManager.DeleteList(listName);
+            Console.WriteLine($"List '{listName}' has been deleted.");
         }
-
-        File.Delete(filePath);
-        Console.WriteLine($"List '{listName}' has been deleted.");
-
-        if (activeList == listName)
-        {
-            return null; // Clear active list if it was deleted
-        }
-
-        return activeList;
+        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
     }
 }

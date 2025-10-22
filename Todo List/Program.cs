@@ -4,10 +4,9 @@ Console.WriteLine("Type 'help' to see available commands.");
 
 var running = true;
 var listsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Todo Lists");
-Directory.CreateDirectory(listsPath);
+var ListManager = new ListManager(listsPath);
 
-string? activeList = null;
-var resolver = new CommandHandlerResolver(listsPath);
+var resolver = new CommandHandlerResolver(ListManager);
 
 while (running)
 {
@@ -26,5 +25,5 @@ while (running)
     }
 
     var handler = resolver.Resolve(command);
-    activeList = handler.Handle(arguments, activeList);
+    handler.Handle(arguments);
 }

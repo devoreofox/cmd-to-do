@@ -1,31 +1,29 @@
 ﻿public class AddHandler : ICommandHandler
 {
-    private readonly string _listsPath;
+    private readonly ListManager _listManager;
 
-    public AddHandler(string listsPath)
+    public AddHandler(ListManager listManager)
     {
-        _listsPath = listsPath;
+        _listManager = listManager;
     }
-    public string? Handle(string[] args, string? activeList)
+
+    public void Handle(string[] args)
     {
-        if (activeList == null)
-        {
-            Console.WriteLine("No active list. Please open a list first.");
-            return activeList;
-        }
 
         if (args.Length == 0)
         {
             Console.WriteLine("Please provide a task description to add.");
-            return activeList;
+            return;
         }
-
         var task = string.Join(' ', args);
-        string filePath = Path.Combine(_listsPath, $"{activeList}.txt");
 
-        File.AppendAllText(filePath, $"[ ] {task}{Environment.NewLine}");
-        Console.WriteLine($"Task added to '{activeList}': {task}");
-
-        return activeList;
+        try
+        {
+            string filePath = _listManager.GetFilePath();
+            var activeList = _listManager.GetActiveList();
+            File.AppendAllText(filePath, $"[ ] {task}{Environment.NewLine}");
+            Console.WriteLine($"Task added to '{activeList}': {task}");
+        }
+        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
     }
 }
