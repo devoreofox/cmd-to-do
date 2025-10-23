@@ -2,6 +2,7 @@
 {
     private readonly string _listsPath;
     private string? _activeList;
+
     public ListManager(string listsPath)
     {
         _listsPath = listsPath;
@@ -25,6 +26,7 @@
         }
         _activeList = listName;
     }
+
     public string GetFilePath()
     {
         if (_activeList == null)
@@ -52,6 +54,7 @@
 
     public void CreateList(string listName)
     {
+        foreach (char c in Path.GetInvalidFileNameChars()) listName = listName.Replace(c, '_');
         string filePath = Path.Combine(_listsPath, $"{listName}.txt");
         if (!File.Exists(filePath))
         {
@@ -83,10 +86,10 @@
 
 public class ListNotFoundException : Exception
 {
-    public ListNotFoundException(string message) : base("List Does Not Exist") { }
+    public ListNotFoundException(string message) : base(message) { }
 }
 
 public class ListAlreadyExistsException : Exception
 {
-    public ListAlreadyExistsException(string message) : base("List Already Exists") { }
+    public ListAlreadyExistsException(string message) : base(message) { }
 }

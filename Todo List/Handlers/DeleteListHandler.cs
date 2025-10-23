@@ -1,15 +1,17 @@
 ﻿public class DeleteListHandler : ICommandHandler
 {
     private readonly ListManager _listManager;
+
     public DeleteListHandler(ListManager listManager)
     {
         _listManager = listManager;
     }
+
     public void Handle(string[] args)
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Please provide the name of the list to delete.");
+            Console.Error.WriteLine("Please provide the name of the list to delete.");
             return;
         }
 
@@ -19,6 +21,6 @@
             _listManager.DeleteList(listName);
             Console.WriteLine($"List '{listName}' has been deleted.");
         }
-        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
+        catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }
     }
 }

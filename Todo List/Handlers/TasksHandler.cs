@@ -1,10 +1,12 @@
 ﻿public class TasksHandler : ICommandHandler
 {
     private readonly ListManager _listManager;
+
     public TasksHandler(ListManager listManager)
     {
         _listManager = listManager;
     }
+
     public void Handle(string[] args)
     {
         try
@@ -16,7 +18,7 @@
 
             if (tasks.Count == 0)
             {
-                Console.WriteLine("No tasks in the list.");
+                Console.Error.WriteLine("No tasks in the list.");
                 return;
             }
 
@@ -42,6 +44,6 @@
                 Console.WriteLine($"{i + 1}: {display[i]}");
             }
         }
-        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
+        catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }
     }
 }

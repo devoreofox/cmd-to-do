@@ -1,6 +1,7 @@
 ﻿public class HelpHandler : ICommandHandler
 {
     public HelpHandler() { }
+
     public void Handle(string[] args)
     {
         Console.WriteLine("Available Commands:");

@@ -2,6 +2,6 @@
 {
     public void Handle(string[] args)
     {
-        Console.WriteLine("Unknown command. Type 'help' to see the list of available commands.");
+        Console.Error.WriteLine("Unknown command. Type 'help' to see the list of available commands.");
     }
 }

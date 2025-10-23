@@ -1,13 +1,15 @@
 ﻿public class RemoveHandler: ICommandHandler
 {
     private readonly ListManager _listManager;
+
     public RemoveHandler(ListManager listManager)
     {
         _listManager = listManager;
     }
+
     public void Handle(string[] args)
     {
-        if (args.Length == 0) Console.WriteLine("Specify what to remove: a number, 'all', 'complete', or 'incomplete'.");
+        if (args.Length == 0) Console.Error.WriteLine("Specify what to remove: a number, 'all', 'complete', or 'incomplete'.");
 
         try
         {
@@ -17,7 +19,7 @@
 
             if (tasks.Count == 0)
             {
-                Console.WriteLine("No tasks to remove.");
+                Console.Error.WriteLine("No tasks to remove.");
                 return;
             }
             string target = args[0].ToLower();
@@ -41,7 +43,7 @@
                     {
                         if (index < 1 || index > tasks.Count)
                         {
-                            Console.WriteLine("Invalid task number.");
+                            Console.Error.WriteLine("Invalid task number.");
                         }
                         else
                         {
@@ -51,11 +53,11 @@
                             Console.WriteLine($"Removed task: {displayTask}");
                         }
                     }
-                    else Console.WriteLine("Invalid argument. Use an index, 'all', 'complete', or 'incomplete'.");
+                    else Console.Error.WriteLine("Invalid argument. Use an index, 'all', 'complete', or 'incomplete'.");
                     break;
             }
             File.WriteAllLines(filePath, tasks);
         }
-        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
+        catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }
     }
 }

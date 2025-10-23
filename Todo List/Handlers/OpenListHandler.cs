@@ -1,6 +1,7 @@
 ﻿public class OpenListHandler : ICommandHandler
 {
     private readonly ListManager _listManager;
+
     public OpenListHandler(ListManager listManager)
     {
         _listManager = listManager;
@@ -10,16 +11,16 @@
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Please provide the name of the list to open.");
+            Console.Error.WriteLine("Please provide the name of the list to open.");
             return; 
         }
 
         try 
         {
-            var listName = args[0];
+            var listName = string.Join(" ", args);
             _listManager.SetActiveList(listName);
             Console.WriteLine($"List '{listName}' is now active.");
         }
-        catch (ListNotFoundException ex) { Console.WriteLine(ex.Message); }
+        catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }
     }
 }
