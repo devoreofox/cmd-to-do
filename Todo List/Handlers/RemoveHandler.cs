@@ -13,9 +13,7 @@
 
         try
         {
-            string filePath = _listManager.GetFilePath();
-            var activeList = _listManager.GetActiveList();
-            var tasks = File.ReadAllLines(filePath).ToList();
+            var tasks = _listManager.LoadTasks();
 
             if (tasks.Count == 0)
             {
@@ -31,11 +29,11 @@
                     Console.WriteLine("All tasks removed.");
                     break;
                 case "complete":
-                    tasks = tasks.Where(t => !t.StartsWith("[X]")).ToList();
+                    tasks = tasks.Where(t => !t.IsCompleted).ToList();
                     Console.WriteLine("All completed tasks removed.");
                     break;
                 case "incomplete":
-                    tasks = tasks.Where(t => !t.StartsWith("[ ]")).ToList();
+                    tasks = tasks.Where(t => t.IsCompleted).ToList();
                     Console.WriteLine("All incomplete tasks removed.");
                     break;
                 default:
@@ -47,8 +45,7 @@
                         }
                         else
                         {
-                            string removedTask = tasks[index - 1];
-                            string displayTask = removedTask.Length > 4 ? removedTask.Substring(4) : removedTask;
+                            var displayTask = tasks[index - 1].Description;
                             tasks.RemoveAt(index - 1);
                             Console.WriteLine($"Removed task: {displayTask}");
                         }
@@ -56,7 +53,7 @@
                     else Console.Error.WriteLine("Invalid argument. Use an index, 'all', 'complete', or 'incomplete'.");
                     break;
             }
-            File.WriteAllLines(filePath, tasks);
+            _listManager.SaveTasks(tasks);
         }
         catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }
     }

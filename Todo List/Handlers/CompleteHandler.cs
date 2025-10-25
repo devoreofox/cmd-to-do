@@ -24,8 +24,7 @@
 
         try
         {
-            string filePath = _listManager.GetFilePath();
-            List<string> tasks = File.ReadAllLines(filePath).ToList();
+            var tasks = _listManager.LoadTasks();
 
             if (taskNumber < 1 || taskNumber > tasks.Count)
             {
@@ -35,14 +34,14 @@
 
             int index = taskNumber - 1;
 
-            if (tasks[index].StartsWith("[X]"))
+            if (tasks[index].IsCompleted)
             {
                 Console.Error.WriteLine("Task is already completed.");
                 return;
             }
 
-            tasks[index] = tasks[index].Replace("[ ]", "[X]");
-            File.WriteAllLines(filePath, tasks);
+            tasks[index].IsCompleted = true;
+            _listManager.SaveTasks(tasks);
             Console.WriteLine($"Task {taskNumber} marked as complete.");
         }
         catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }

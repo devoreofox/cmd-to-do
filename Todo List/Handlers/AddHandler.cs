@@ -19,9 +19,12 @@
 
         try
         {
-            string filePath = _listManager.GetFilePath();
             var activeList = _listManager.GetActiveList();
-            File.AppendAllText(filePath, $"[ ] {task}{Environment.NewLine}");
+            var tasks = _listManager.LoadTasks();
+            var newTask = new TodoItem(task);
+
+            tasks.Add(newTask);
+            _listManager.SaveTasks(tasks);
             Console.WriteLine($"Task added to '{activeList}': {task}");
         }
         catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }

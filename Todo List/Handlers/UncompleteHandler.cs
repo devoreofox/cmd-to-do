@@ -15,8 +15,7 @@
         }
         try
         {
-            string filePath = _listManager.GetFilePath();
-            List<string> tasks = File.ReadAllLines(filePath).ToList();
+            var tasks = _listManager.LoadTasks(); 
 
             if (!int.TryParse(args[0], out int taskNumber)) Console.Error.WriteLine("Invalid task number format.");
 
@@ -29,14 +28,14 @@
 
             int index = taskNumber - 1;
 
-            if (tasks[index].StartsWith("[ ]"))
+            if (!tasks[index].IsCompleted)
             {
                 Console.Error.WriteLine("Task is already incomplete.");
                 return;
             }
 
-            tasks[index] = tasks[index].Replace("[X]", "[ ]");
-            File.WriteAllLines(filePath, tasks);
+            tasks[index].IsCompleted = false;
+            _listManager.SaveTasks(tasks);
             Console.WriteLine($"Task {taskNumber} marked as incomplete.");
         }
         catch (ListNotFoundException ex) { Console.Error.WriteLine(ex.Message); }
