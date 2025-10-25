@@ -14,7 +14,11 @@ public static class MigrationHelper
             return;
         }
 
-        if (txtFiles.Length == 0) return;
+        if (txtFiles.Length == 0)
+        {
+            File.WriteAllText(flagFilePath, "No legacy text lists found. Migration not required.");
+            return;
+        }
 
         Console.WriteLine("Legacy text-based todo lists detected.");
         Console.WriteLine("Would you like to migrate them to the new JSON format? (y/n)");
