@@ -4,6 +4,7 @@ Console.WriteLine("Type 'help' to see available commands.");
 
 var running = true;
 var listsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Todo Lists");
+MigrationHelper.MigrateToJson(listsPath);
 var ListManager = new ListManager(listsPath);
 
 var resolver = new CommandHandlerResolver(ListManager);
