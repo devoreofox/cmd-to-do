@@ -11,8 +11,11 @@
     {
         List<string> lists = _listManager.GetLists();
 
-        if (lists.Count == 0) Console.Error.WriteLine("No lists available.");
-
+        if (lists.Count == 0)
+        {
+            Console.Error.WriteLine("No lists available.");
+            return;
+        }
 
         Console.WriteLine("Available lists:");
         try

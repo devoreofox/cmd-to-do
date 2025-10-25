@@ -1,4 +1,6 @@
-﻿public class ListManager
+﻿using System.Text.Json;
+
+public class ListManager
 {
     private readonly string _listsPath;
     private string? _activeList;
@@ -33,7 +35,7 @@
         {
             throw new ListNotFoundException("No active list selected.");
         }
-        return Path.Combine(_listsPath, $"{_activeList}.txt");
+        return Path.Combine(_listsPath, $"{_activeList}.json");
     }
 
     public List<string> GetLists()
@@ -42,20 +44,20 @@
         {
             Directory.CreateDirectory(_listsPath);
         }
-        var files = Directory.GetFiles(_listsPath, "*.txt");
+        var files = Directory.GetFiles(_listsPath, "*.json");
         return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
     }
 
     public bool ListExists(string listName)
     {
-        string filePath = Path.Combine(_listsPath, $"{listName}.txt");
+        string filePath = Path.Combine(_listsPath, $"{listName}.json");
         return File.Exists(filePath);
     }
 
     public void CreateList(string listName)
     {
         foreach (char c in Path.GetInvalidFileNameChars()) listName = listName.Replace(c, '_');
-        string filePath = Path.Combine(_listsPath, $"{listName}.txt");
+        string filePath = Path.Combine(_listsPath, $"{listName}.json");
         if (!File.Exists(filePath))
         {
             File.Create(filePath).Dispose();
@@ -68,7 +70,7 @@
 
     public void DeleteList(string listName)
     {
-        string filePath = Path.Combine(_listsPath, $"{listName}.txt");
+        string filePath = Path.Combine(_listsPath, $"{listName}.json");
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
@@ -81,6 +83,21 @@
         {
             throw new ListNotFoundException($"List '{listName}' does not exist.");
         }
+    }
+
+    public List<TodoItem> LoadTasks()
+    {
+        if (_activeList == null) throw new ListNotFoundException("No active list selected.");
+        string json = File.ReadAllText(GetFilePath());
+        if (string.IsNullOrWhiteSpace(json)) return new List<TodoItem>();
+        return JsonSerializer.Deserialize<List<TodoItem>>(json) ?? new List<TodoItem>();
+    }
+
+    public void SaveTasks(List<TodoItem> tasks)
+    {
+        if (_activeList == null) throw new ListNotFoundException("No active list selected.");
+        string json = JsonSerializer.Serialize(tasks, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(GetFilePath(), json);
     }
 }
 
