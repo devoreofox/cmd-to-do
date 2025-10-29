@@ -15,6 +15,11 @@ public class ListManager
         LoadActiveList();
     }
 
+    public string GetPath()
+    {
+        return _listsPath;
+    }
+
     public string? GetActiveList()
     {
         if (_activeList == null)

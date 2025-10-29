@@ -1,22 +1,20 @@
 ﻿using System.Text.Json;
 
-public static class MigrationHelper
+public class MigrateHandler : ICommandHandler
 {
-    private const string MigrationFlagFile = "migration_complete.flag";
-
-    public static void MigrateToJson(string listsPath)
+    private readonly ListManager _listManager;
+    public MigrateHandler(ListManager listManager)
     {
-        string flagFilePath = Path.Combine(listsPath, MigrationFlagFile);
+        _listManager = listManager;
+    }
+    public void Handle(string[] args)
+    {
+        var listsPath = _listManager.GetPath();
         var txtFiles = Directory.GetFiles(listsPath, "*.txt");
-
-        if(File.Exists(flagFilePath))
-        {
-            return;
-        }
 
         if (txtFiles.Length == 0)
         {
-            File.WriteAllText(flagFilePath, "No legacy text lists found. Migration not required.");
+            Console.WriteLine("No legacy text-based todo lists found. Migration not required.");
             return;
         }
 
@@ -29,7 +27,8 @@ public static class MigrationHelper
             Console.WriteLine("Migration skipped. Legacy text lists will remain unchanged.");
             return;
         }
-        foreach (var txtFile in txtFiles)
+
+        foreach(var txtFile in txtFiles)
         {
             try
             {
@@ -56,49 +55,37 @@ public static class MigrationHelper
 
                 string json = JsonSerializer.Serialize(tasks, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(jsonFile, json);
-
                 Console.WriteLine($"Migration completed for '{Path.GetFileName(txtFile)}'.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to migrate '{Path.GetFileName(txtFile)}': {ex.Message}");
+                Console.WriteLine($"Error migrating '{Path.GetFileName(txtFile)}': {ex.Message}");
             }
         }
 
-        Console.WriteLine("Migration completed.");
-        File.WriteAllText(flagFilePath, "Migration completed on " + DateTime.Now);
-        DeleteLegacy(listsPath);
-    }
+        Console.WriteLine("All migrations completed.");
 
-    private static void DeleteLegacy(string listsPath)
-    {
-        var legacyFiles = Directory.GetFiles(listsPath, "*.txt");
-        if (legacyFiles.Length == 0) return;
-
-        Console.WriteLine();
-        Console.WriteLine("Legacy text lists remain after migration.");
-        Console.WriteLine("Would you like to delete the old .txt files now? (y/n)");
-        string? input = Console.ReadLine()?.Trim().ToLower();
-
+        Console.WriteLine("Would you like to delete the legacy text files? (y/n)");
+        input = Console.ReadLine()?.Trim().ToLower();
         if (input == "y" || input == "yes")
         {
-            foreach (var file in legacyFiles)
+            foreach (var txtFile in txtFiles)
             {
                 try
                 {
-                    File.Delete(file);
-                    Console.WriteLine($"Deleted: {Path.GetFileName(file)}");
+                    File.Delete(txtFile);
+                    Console.WriteLine($"Deleted legacy file '{Path.GetFileName(txtFile)}'.");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to delete {Path.GetFileName(file)}: {ex.Message}");
+                    Console.WriteLine($"Failed to delete '{Path.GetFileName(txtFile)}': {ex.Message}");
                 }
             }
-            Console.WriteLine("All legacy .txt files deleted.");
+            Console.WriteLine("Legacy text files deleted.");
         }
         else
         {
-            Console.WriteLine("Legacy .txt files retained.");
+            Console.WriteLine("Legacy text files retained.");
         }
     }
 }

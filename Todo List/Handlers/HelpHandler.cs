@@ -4,6 +4,8 @@
 
     public void Handle(string[] args)
     {
+        Console.WriteLine("Usage: todo [command] [options]");
+        Console.WriteLine();
         Console.WriteLine("Available Commands:");
         Console.WriteLine("-------------------");
         Console.WriteLine("help - Displays this help message.");
@@ -16,6 +18,6 @@
         Console.WriteLine("remove [task number | all | complete | incomplete] - removes tasks matching the given entry");
         Console.WriteLine("complete [task number] - Marks a task as completed.");
         Console.WriteLine("uncomplete [task number] - Marks a task as incomplete.");
-        Console.WriteLine("exit - Exits the application.");
+        Console.WriteLine("migrate - Migrates legacy text-based to-do lists to the new JSON format.");
     }
 }
