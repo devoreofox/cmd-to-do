@@ -3,17 +3,21 @@
 public class ListManager
 {
     private readonly string _listsPath;
+    private readonly string _flagFilePath;
     private string? _activeList;
 
     public ListManager(string listsPath)
     {
         _listsPath = listsPath;
+        _flagFilePath = Path.Combine(_listsPath, ".activeList.flag");
         Directory.CreateDirectory(_listsPath);
+
+        LoadActiveList();
     }
 
     public string? GetActiveList()
     {
-        if(_activeList == null)
+        if (_activeList == null)
         {
             throw new ListNotFoundException("No active list selected.");
         }
@@ -27,6 +31,7 @@ public class ListManager
             throw new ListNotFoundException($"List '{listName}' does not exist.");
         }
         _activeList = listName;
+        SaveActiveList();
     }
 
     public string GetFilePath()
@@ -74,9 +79,10 @@ public class ListManager
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
-            if(_activeList == listName)
+            if (_activeList == listName)
             {
                 _activeList = null;
+                SaveActiveList();
             }
         }
         else
@@ -99,14 +105,40 @@ public class ListManager
         string json = JsonSerializer.Serialize(tasks, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(GetFilePath(), json);
     }
-}
 
-public class ListNotFoundException : Exception
-{
-    public ListNotFoundException(string message) : base(message) { }
-}
+    private void LoadActiveList()
+    {
+        if (File.Exists(_flagFilePath))
+        {
+            var savedListName = File.ReadAllText(_flagFilePath).Trim();
 
-public class ListAlreadyExistsException : Exception
-{
-    public ListAlreadyExistsException(string message) : base(message) { }
+            if (!string.IsNullOrEmpty(savedListName) && ListExists(savedListName)) _activeList = savedListName;
+            else
+            {
+                _activeList = null;
+                File.Delete(_flagFilePath);
+            } 
+        }
+    }
+
+    public void SaveActiveList()
+    {
+        if (!string.IsNullOrEmpty(_activeList))
+        {
+            File.WriteAllText(_flagFilePath, _activeList);
+        }
+        else if (File.Exists(_flagFilePath))
+        {
+            File.Delete(_flagFilePath);
+        }
+    }
 }
+    public class ListNotFoundException : Exception
+    {
+        public ListNotFoundException(string message) : base(message) { }
+    }
+
+    public class ListAlreadyExistsException : Exception
+    {
+        public ListAlreadyExistsException(string message) : base(message) { }
+    }
