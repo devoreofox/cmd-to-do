@@ -3,10 +3,12 @@
 public class MigrateHandler : ICommandHandler
 {
     private readonly ListManager _listManager;
+
     public MigrateHandler(ListManager listManager)
     {
         _listManager = listManager;
     }
+
     public void Handle(string[] args)
     {
         var listsPath = _listManager.GetPath();

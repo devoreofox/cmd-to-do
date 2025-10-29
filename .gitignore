@@ -484,4 +484,4 @@ $RECYCLE.BIN/
 *.swp
 
 # Visual Studio debug settings
-Properties/launchSettings.json
+**/Properties/launchSettings.json

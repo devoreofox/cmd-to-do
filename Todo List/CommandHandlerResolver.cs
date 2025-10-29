@@ -6,6 +6,7 @@
     {
         _listManager = listManager;
     }
+
     public ICommandHandler Resolve(string commandName)
     {
         return commandName.ToLower() switch
