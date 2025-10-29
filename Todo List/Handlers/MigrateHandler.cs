@@ -19,14 +19,6 @@ public class MigrateHandler : ICommandHandler
         }
 
         Console.WriteLine("Legacy text-based todo lists detected.");
-        Console.WriteLine("Would you like to migrate them to the new JSON format? (y/n)");
-        var input = Console.ReadLine()?.Trim().ToLower();
-
-        if (input != "y" && input != "yes")
-        {
-            Console.WriteLine("Migration skipped. Legacy text lists will remain unchanged.");
-            return;
-        }
 
         foreach(var txtFile in txtFiles)
         {
@@ -63,29 +55,6 @@ public class MigrateHandler : ICommandHandler
             }
         }
 
-        Console.WriteLine("All migrations completed.");
-
-        Console.WriteLine("Would you like to delete the legacy text files? (y/n)");
-        input = Console.ReadLine()?.Trim().ToLower();
-        if (input == "y" || input == "yes")
-        {
-            foreach (var txtFile in txtFiles)
-            {
-                try
-                {
-                    File.Delete(txtFile);
-                    Console.WriteLine($"Deleted legacy file '{Path.GetFileName(txtFile)}'.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to delete '{Path.GetFileName(txtFile)}': {ex.Message}");
-                }
-            }
-            Console.WriteLine("Legacy text files deleted.");
-        }
-        else
-        {
-            Console.WriteLine("Legacy text files retained.");
-        }
+        Console.WriteLine("All migrations completed. You may delete legacy files now.");
     }
 }
