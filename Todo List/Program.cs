@@ -6,7 +6,7 @@ var resolver = new CommandHandlerResolver(ListManager);
 if (args.Length == 0)
 {
     Console.Error.WriteLine("Usage : todo <command> [arguments]");
-    Console.WriteLine("Type 'help' to see available commands.");
+    Console.WriteLine("Type 'todo help' to see available commands.");
     return;
 }
 var command = args[0].ToLower();
