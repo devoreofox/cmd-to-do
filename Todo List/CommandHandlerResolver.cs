@@ -6,6 +6,7 @@
     {
         _listManager = listManager;
     }
+
     public ICommandHandler Resolve(string commandName)
     {
         return commandName.ToLower() switch
@@ -19,6 +20,7 @@
             "create" => new CreateListHandler(_listManager),
             "delete" => new DeleteListHandler(_listManager),
             "open" => new OpenListHandler(_listManager),
+            "migrate" => new MigrateHandler(_listManager),
             "help" => new HelpHandler(),
             _ => new UnknownHandler()
         };
