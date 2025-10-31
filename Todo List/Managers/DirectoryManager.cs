@@ -51,9 +51,14 @@
         }
     }
 
-    public static void EnsureInitialized()
+    public static bool IsInitialized()
     {
-        if (FindRoot() == null) throw new NotInitializedException("No .todo directory found, please use `todo init` to initialize the project.");
+        if (FindRoot() == null)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public static void Initialize()

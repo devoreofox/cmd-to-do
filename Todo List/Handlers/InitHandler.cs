@@ -4,6 +4,11 @@
     {
         try
         {
+            if(DirectoryManager.IsInitialized())
+            {
+                Console.Error.WriteLine("Error: .todo directory already exists. Initialization aborted.");
+                return;
+            }
             DirectoryManager.Initialize();
             Console.WriteLine("Initialized .todo directory.");
         }
