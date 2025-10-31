@@ -2,15 +2,16 @@
 
 public class ListManager
 {
+    private readonly DirectoryManager _directoryManager;
     private readonly string _listsPath;
     private readonly string _flagFilePath;
     private string? _activeList;
 
-    public ListManager(string listsPath)
+    public ListManager(DirectoryManager directoryManager)
     {
-        _listsPath = listsPath;
-        _flagFilePath = Path.Combine(_listsPath, ".activeList.flag");
-        Directory.CreateDirectory(_listsPath);
+        _directoryManager = directoryManager;
+        _listsPath = directoryManager.GetListsPath();
+        _flagFilePath = directoryManager.GetFlagPath();
 
         LoadActiveList();
     }

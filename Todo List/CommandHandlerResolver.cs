@@ -21,6 +21,7 @@
             "delete" => new DeleteListHandler(_listManager),
             "open" => new OpenListHandler(_listManager),
             "migrate" => new MigrateHandler(_listManager),
+            "init" => new InitHandler(),
             "help" => new HelpHandler(),
             _ => new UnknownHandler()
         };
