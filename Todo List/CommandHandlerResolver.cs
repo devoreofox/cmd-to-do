@@ -1,15 +1,26 @@
 ﻿public class CommandHandlerResolver
 {
-    private readonly ListManager _listManager;
-
-    public CommandHandlerResolver(ListManager listManager)
-    {
-        _listManager = listManager;
-    }
+    private DirectoryManager? _directoryManager;
+    private ListManager? _listManager;
 
     public ICommandHandler Resolve(string commandName)
     {
-        return commandName.ToLower() switch
+
+        string cmd = commandName.ToLower();
+
+        bool isGlobalCommand = cmd == "init" || cmd == "help";
+
+        if (!isGlobalCommand)
+        {
+            if (!DirectoryManager.IsInitialized())
+            {
+                throw new NotInitializedException("No .todo directory found, please use `todo init` to initialize the project.");
+            }
+            _directoryManager ??= new DirectoryManager();
+            _listManager ??= new ListManager(_directoryManager);
+        }
+
+            return cmd switch
         {
             "add" => new AddHandler(_listManager),
             "remove" => new RemoveHandler(_listManager),

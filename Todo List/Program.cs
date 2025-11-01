@@ -5,26 +5,18 @@
     return;
 }
 
-ICommandHandler? handler = null;
-
 var command = args[0].ToLower();
 var arguments = args.Skip(1).ToArray();
 
 try
 {
-    if (command == "init")
-    {
-        handler = new InitHandler();
-        handler.Handle(arguments);
-        return;
-    }
-
-    var directoryManager = new DirectoryManager();
-    var listManager = new ListManager(directoryManager);
-    var resolver = new CommandHandlerResolver(listManager);
-
-    handler = resolver.Resolve(command);
+    var resolver = new CommandHandlerResolver();
+    var handler = resolver.Resolve(command);
     handler.Handle(arguments);
+}
+catch (NotInitializedException ex)
+{
+    Console.Error.WriteLine(ex.Message);
 }
 catch (Exception ex)
 {

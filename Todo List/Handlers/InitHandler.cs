@@ -1,14 +1,15 @@
 ﻿public class InitHandler : ICommandHandler
 {
+
     public void Handle(string[] args)
     {
         try
         {
             if(DirectoryManager.IsInitialized())
             {
-                Console.Error.WriteLine("Error: .todo directory already exists. Initialization aborted.");
-                return;
+                throw new AlreadyInitializedException("The .todo directory is already initialized.");
             }
+
             DirectoryManager.Initialize();
             Console.WriteLine("Initialized .todo directory.");
         }
