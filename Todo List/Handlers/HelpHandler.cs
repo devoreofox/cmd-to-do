@@ -19,5 +19,6 @@
         Console.WriteLine("complete [task number] - Marks a task as completed.");
         Console.WriteLine("uncomplete [task number] - Marks a task as incomplete.");
         Console.WriteLine("migrate - Migrates legacy text-based to-do lists to the new JSON format.");
+        Console.WriteLine("init - Initializes a new .todo directory in the current folder.");
     }
 }
