@@ -1,6 +1,6 @@
 ﻿public class CommandHandlerResolver
 {
-    private DirectoryManager? _directoryManager;
+    private TodoProject? _todoProject;
     private ListManager? _listManager;
 
     public ICommandHandler Resolve(string commandName)
@@ -12,12 +12,12 @@
 
         if (!isGlobalCommand)
         {
-            if (!DirectoryManager.IsInitialized())
+            if (!TodoProject.IsInitialized())
             {
                 throw new NotInitializedException("No .todo directory found, please use `todo init` to initialize the project.");
             }
-            _directoryManager ??= new DirectoryManager();
-            _listManager ??= new ListManager(_directoryManager);
+            _todoProject ??= new TodoProject();
+            _listManager ??= new ListManager(_todoProject);
         }
 
             return cmd switch

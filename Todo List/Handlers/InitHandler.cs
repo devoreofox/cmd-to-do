@@ -5,12 +5,12 @@
     {
         try
         {
-            if(DirectoryManager.IsInitialized())
+            if(TodoProject.IsInitialized())
             {
                 throw new AlreadyInitializedException("The .todo directory is already initialized.");
             }
 
-            DirectoryManager.Initialize();
+            TodoProject.Initialize();
             Console.WriteLine("Initialized .todo directory.");
         }
         catch (Exception ex)

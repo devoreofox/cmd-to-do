@@ -2,16 +2,16 @@
 
 public class ListManager
 {
-    private readonly DirectoryManager _directoryManager;
+    private readonly TodoProject _projectRoot;
     private readonly string _listsPath;
     private readonly string _flagFilePath;
     private string? _activeList;
 
-    public ListManager(DirectoryManager directoryManager)
+    public ListManager(TodoProject todoProject)
     {
-        _directoryManager = directoryManager;
-        _listsPath = directoryManager.GetListsPath();
-        _flagFilePath = directoryManager.GetFlagPath();
+        _projectRoot = todoProject;
+        _listsPath = todoProject._listsPath;
+        _flagFilePath = todoProject._flagPath;
 
         LoadActiveList();
     }

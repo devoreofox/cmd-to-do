@@ -1,32 +1,15 @@
-﻿public class DirectoryManager
+﻿public class TodoProject
 {
-    private readonly string _rootPath;
-    private readonly string _listsPath;
-    private readonly string _flagPath;
+    public string _rootPath { get; private set; }
+    public string _listsPath { get; private set; }
+    public string _flagPath { get; private set; }
 
-    public DirectoryManager()
+    public TodoProject()
     {
         _rootPath = FindRoot() ?? throw new NotInitializedException("No .todo directory found, please use `todo init` to initialize the project.");
         _listsPath = Path.Combine(_rootPath, "lists");
         _flagPath = Path.Combine(_rootPath, ".activeList.flag");
     }
-
-    public string GetRootPath()
-    {
-        return _rootPath;
-    }
-
-    public string GetListsPath()
-    {
-        return _listsPath;
-    }
-
-    public string GetFlagPath()
-    {
-        return _flagPath;
-    }
-
-
 
     private static string? FindRoot()
     {
@@ -45,9 +28,7 @@
 
     public static bool IsInitialized()
     {
-        if (FindRoot() == null) return false;
-
-        return true;
+        return FindRoot() != null;
     }
 
     public static void Initialize()
