@@ -6,19 +6,36 @@
 }
 
 var command = args[0].ToLower();
-var arguments = args.Skip(1).ToArray();
+var resolver = new CommandHandlerResolver();
+var handler = resolver.ResolveGlobalCommand(command);
+
+if (handler is not null)
+{
+    handler.Handle(args[1..]);
+    return;
+}
 
 try
 {
-    var resolver = new CommandHandlerResolver();
-    var handler = resolver.Resolve(command);
-    handler.Handle(arguments);
+    var listManager = new ListManager(new TodoProject());
+    resolver = new CommandHandlerResolver(listManager);
+    handler = resolver.ResolveProjectCommand(command);
+
+    if (handler is null)
+    {
+        Console.Error.WriteLine($"Unknown command: {command}");
+        return;
+    }
+
+    if (!TodoProject.IsInitialized())
+    {
+        Console.Error.WriteLine("No .todo directory found, please use `todo init` to initialize the project.");
+        return;
+    }
+
+    handler.Handle(args[1..]);
 }
-catch (NotInitializedException ex)
+catch (Exception e)
 {
-    Console.Error.WriteLine(ex.Message);
-}
-catch (Exception ex)
-{
-    Console.Error.WriteLine($"An error occurred: {ex.Message}");
+    Console.Error.WriteLine($"Error: {e.Message}");
 }
