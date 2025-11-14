@@ -1,15 +1,21 @@
 ﻿public class CommandHandlerResolver
 {
-    private readonly ListManager _listManager;
+    private ListManager? _listManager;
+
+    public CommandHandlerResolver() { }
 
     public CommandHandlerResolver(ListManager listManager)
     {
         _listManager = listManager;
     }
 
-    public ICommandHandler Resolve(string commandName)
+    public ICommandHandler? ResolveProjectCommand(string commandName)
     {
-        return commandName.ToLower() switch
+            if (_listManager is null)
+        {
+            return null;
+        }
+            return commandName.ToLower() switch
         {
             "add" => new AddHandler(_listManager),
             "remove" => new RemoveHandler(_listManager),
@@ -21,8 +27,17 @@
             "delete" => new DeleteListHandler(_listManager),
             "open" => new OpenListHandler(_listManager),
             "migrate" => new MigrateHandler(_listManager),
-            "help" => new HelpHandler(),
             _ => new UnknownHandler()
+        };
+    }
+
+    public ICommandHandler? ResolveGlobalCommand(string commandName)
+    {
+        return commandName.ToLower() switch
+        {
+            "init" => new InitHandler(),
+            "help" => new HelpHandler(),
+            _ => null
         };
     }
 }
